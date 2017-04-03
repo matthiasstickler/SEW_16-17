@@ -4,8 +4,7 @@ Created on 27.12.2013
 @author: uhs374h
 """
 import unittest
-from bruch.Bruch import *
-
+from Bruch import *
 
 class TestAllgemein(unittest.TestCase):
 
@@ -62,10 +61,15 @@ class TestAllgemein(unittest.TestCase):
     def test_makeBruchTypeError(self):
         self.assertRaises(TypeError, Bruch._Bruch__makeBruch, "other")
 
+    def test_makeBruchWithBruch(self):
+        value = Bruch(1,2)
+        btemp = Bruch._Bruch__makeBruch(value)
+        assert (btemp == value)
+
     def test_makeBruchInt(self):
         value = 3
         b4 = Bruch._Bruch__makeBruch(value)
-        assert(b4.zaehler == value)
+        assert(b4.zaehler== value)
 
     def testAbs(self):
         b4 = Bruch(-3, 2)
@@ -102,8 +106,14 @@ class TestVergleich(unittest.TestCase):
     def testNotEqual(self):
         assert(self.b != self.b3)
 
+    def testEqualError(self):
+        self.assertRaises(TypeError, self.b2.__eq__, "qased")
+
     def testGE(self):
         assert(self.b >= self.b2)
+
+    def testGE2(self):
+        self.assertRaises(TypeError, self.b2.__ge__,1)
 
     def testLE(self):
         assert(self.b <= self.b2)
@@ -113,6 +123,13 @@ class TestVergleich(unittest.TestCase):
 
     def testGT(self):
         assert(self.b3 > self.b2)
+
+    def testGTError(self):
+        self.assertRaises(TypeError, self.b2.__gt__,"asd")
+
+    def testReduce(self):
+        temp = Bruch.reduce(1,2)
+        assert(temp == 1)
 
 
 class TestString(unittest.TestCase):
@@ -324,6 +341,9 @@ class TestDivision(unittest.TestCase):
 
     def testiDivError(self):
         self.assertRaises(TypeError, self.b.__itruediv__, "other")
+
+
+
 
 
 class TestIteration(unittest.TestCase):
