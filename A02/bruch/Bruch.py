@@ -1,35 +1,42 @@
 """
 Created on 26.10.2016
 
-@author: mstickler01
+@author: Matthias Stickler
+@version: 1.2
 """
 from __future__ import division, print_function, unicode_literals
 
-class Bruch(object):
 
+class Bruch(object):
     """ Bruch
-    :param int zaehler: numerator
-    :param int nenner: denominator
-    :ivar int zaehler: numerator
-    :ivar int nenner: denominator
+
+    :param int zaehler: Zaehler
+    :param int nenner: Nenner
+    :ivar int zaehler: Zaehler
+    :ivar int nenner: Nenner
     """
+
     def __iter__(self):
+
+        """Laesst durch den Bruch iterieren
+        """
         return (self.zaehler, self.nenner).__iter__()
 
-    def __init__(self, zaehler=0, nenner=0):
+    def __init__(self, zaehler=0, nenner=1):
 
-        """constructor
+        """Konstruktor
+
         :raise TypeError: incompatible types
-        :param zaehler: int
-        :param nenner: int (not zero)
+        :param zaehler: Bruch oder int
+        :param nenner: int - nicht 0
         """
         if isinstance(zaehler, Bruch):
             self.zaehler, self.nenner = zaehler
             return
         elif type(zaehler) is not int:
-            raise TypeError('incompatible type:'+type(zaehler).__name__)
+            raise TypeError('incompatible type:' + type(zaehler).__name__)
         elif type(nenner) is not int:
-            raise TypeError('incompatible type:'+type(nenner).__name__) 
+            raise TypeError('incompatible type:' + type(nenner).__name__)
         if nenner == 0:
             raise ZeroDivisionError
         self.zaehler = zaehler
@@ -37,7 +44,7 @@ class Bruch(object):
 
     def __float__(self):
 
-        """overrides float()
+        """überschreibt float()
 
         :return: float
         """
@@ -45,7 +52,7 @@ class Bruch(object):
 
     def __int__(self):
 
-        """overrides int()
+        """überschreibt int()
 
         :return: int
         """
@@ -53,8 +60,7 @@ class Bruch(object):
 
     def __neg__(self):
 
-        """
-        Negation
+        """negiert den Bruch
 
         :return: Bruch
         """
@@ -62,21 +68,20 @@ class Bruch(object):
 
     def __radd__(self, zaehler):
 
-        """
-        Another version of add
+        """add für Python 2.x
 
-        :param zaehler: int or Bruch
+        :raise TypeError: incompatible types
+        :param zaehler: int oder Bruch
         :return: Bruch
         """
         return self.__add__(zaehler)
 
     def __add__(self, zaehler):
 
-        """
-        Addition
+        """Addition
 
         :raise TypeError: incompatible types
-        :param zaehler: int or Bruch
+        :param zaehler: int oder Bruch
         :return: Bruch
         """
         if isinstance(zaehler, Bruch):
@@ -84,63 +89,61 @@ class Bruch(object):
         elif type(zaehler) is int:
             z2, n2 = zaehler, 1
         else:
-            raise TypeError('incompatible types:'+type(zaehler).__name__)
-        nnenner = self.nenner * n2
-        nzaehler = z2*self.nenner + n2*self.zaehler
-        return Bruch(nzaehler, nnenner)
-    
+            raise TypeError('incompatible types:' + type(zaehler).__name__ + ' + Bruch()')
+        nennerneu = self.nenner * n2
+        zaehlerneu = z2 * self.nenner + n2 * self.zaehler
+        return Bruch(zaehlerneu, nennerneu)
+
     def __complex__(self):
 
-        """
-        overrides complex()
+        """überschreibt complex()
 
         :return: complex
         """
         return complex(self.__float__())
-        
-    def __rsub__(self, tmp):
 
-        """
-        another version of sub
+    def __rsub__(self, left):
+
+        """sub für Python 2.x
 
         :raise TypeError: incompatible types
-        :param zaehler: int or Bruch
+        :param zaehler: int oder Bruch
         :return: Bruch
         """
-        if type(tmp) is int:
-            z2 = tmp
-            nnenner = self.nenner
-            nzaehler = z2 * self.nenner - self.zaehler
-            return Bruch(nzaehler, nnenner)
+        if type(left) is int:
+            z2 = left
+            nennerneu = self.nenner
+            zaehlerneu = z2 * self.nenner - self.zaehler
+            return Bruch(zaehlerneu, nennerneu)
         else:
-            raise TypeError('incompatible types:' + type(tmp).__name__)
+            raise TypeError('incompatible types:' + type(left).__name__ + ' - Bruch()')
 
     def __sub__(self, zaehler):
 
-        """sub
+        """Subtraktion
 
         :raise TypeError: incompatible types
-        :param zaehler: int or Bruch
+        :param zaehler: int oder Bruch
         :return: Bruch
         """
-        return self.__add__(zaehler*-1)
-    
+        return self.__add__(zaehler * -1)
+
     def __rmul__(self, zaehler):
 
-        """right version of mul
+        """mul für Python 2.x
 
         :raise TypeError: incompatible types
-        :param zaehler: int or Bruch
+        :param zaehler: int oder Bruch
         :return: Bruch
         """
         return self.__mul__(zaehler)
-        
+
     def __mul__(self, zaehler):
 
-        """mul
+        """Multiplikation
 
         :raise TypeError: incompatible types
-        :param zaehler: int or Bruch
+        :param zaehler: int oder Bruch
         :return: Bruch
         """
         if isinstance(zaehler, Bruch):
@@ -148,226 +151,250 @@ class Bruch(object):
         elif type(zaehler) is int:
             z2, n2 = zaehler, 1
         else:
-            raise TypeError('incompatible types:'+type(zaehler).__name__)
+            raise TypeError('incompatible types:' + type(zaehler).__name__ + ' * Bruch()')
         z2 *= self.zaehler
         n2 *= self.nenner
         return Bruch(z2, n2)
-    
+
     def __pow__(self, p):
 
-        """Bruch power
+        """Exponential
 
         :raise TypeError: incompatible types
         :param int p: power
         :return: Bruch
         """
         if type(p) is int:
-            return Bruch(self.zaehler**p, self.nenner**p)
+            return Bruch(self.zaehler ** p, self.nenner ** p)
         else:
-            raise TypeError('incompatible types:'+type(p).__name__)
+            raise TypeError('incompatible types:' + type(p).__name__ + ' should be an int')
 
-    def __rdiv__(self, tmp):
+    def __rdiv__(self, other):
 
-        """
-        right version of division for python 2.x
+        """div für Python 2.x
 
-        :param zaehler: int or Bruch
+        :param zaehler: int oder Bruch
         :return: Bruch
         """
-        return self.__rtruediv__(tmp)
-    
-    def __rtruediv__(self, tmp):
+        return self.__rtruediv__(other)
 
-        """
-        right version of div for python >= 3.x
+    def __rtruediv__(self, left):
+
+        """div für Python >= 3.x
 
         :raise TypeError: incompatible types
-        :param tmp: int or Bruch
+        :param zaehler: int oder Bruch
         :return: Bruch
         """
-        if type(tmp) is int:
-            z2 = tmp * self.nenner
+        if type(left) is int:
+            z2 = left * self.nenner
             if self.zaehler == 0:
                 raise ZeroDivisionError
             return Bruch(z2, self.zaehler)
         else:
-            raise TypeError('incompatible types:'+type(tmp).__name__)
+            raise TypeError('incompatible types:' + type(left).__name__ + ' / Bruch()')
 
-    def __div__(self, tmp):
+    def __div__(self, other):
 
-        """
-        division for python 2.x
+        """div für Python 2.x
 
-        :param other: int or Bruch
+        :param other: int oder Bruch
         :return: Bruch
         """
-        return self.__truediv__(tmp)
+        return self.__truediv__(other)
 
-    def __truediv__(self, tmp):
+    def __truediv__(self, zaehler):
 
-        """
-        division python >= 3.x
+        """Division
 
         :raise TypeError: incompatible types
-        :param zaehler: Bruch or int
+        :param zaehler: Bruch oder int
         :return: Bruch
         """
-        if isinstance(tmp, Bruch):
-            z2, n2 = tmp
-        elif type(tmp) is int:
-            z2, n2 = tmp, 1
+        if isinstance(zaehler, Bruch):
+            z2, n2 = zaehler
+        elif type(zaehler) is int:
+            z2, n2 = zaehler, 1
         else:
-            raise TypeError('incompatible types:'+type(tmp).__name__)
+            raise TypeError('incompatible types:' + type(zaehler).__name__ + ' / Bruch()')
         if z2 == 0:
             raise ZeroDivisionError
         return self.__mul__(Bruch(n2, z2))
-    
+
     def __invert__(self):
 
-        """
-        invert function
+        """Inversieren des Bruchs
 
         :return: Bruch
         """
         return Bruch(self.nenner, self.zaehler)
 
-    def __makeBruch(tmp):
+    def __repr__(self):
 
+        """Bruch objekt representieren
+
+        :return str: the representation
         """
-        make a bruch
+        # Vor der Ausgabe wird gekuerzt!
+        shorten = Bruch.gcd(self.zaehler, self.nenner)
+        self.zaehler //= shorten
+        self.nenner //= shorten
+        # Nenner stehts positiv
+        if self.nenner < 0:
+            self.nenner *= -1
+            self.zaehler *= -1
+
+        if self.nenner == 1:
+            return "(%d)" % self.zaehler
+        else:
+            return "(%d/%d)" % (self.zaehler, self.nenner)
+
+    def __makeBruch(other):
+
+        """Bruch erstellen oder referenz zurueckgeben
 
         :raise TypeError: incompatible types
-        :param tmp: Bruch or int
+        :param other: Bruch oder int
         :return: Bruch
         """
-        if isinstance(tmp, Bruch):
-            return tmp
-        elif type(tmp) is int:
-            b = Bruch(tmp, 1)
+        if isinstance(other, Bruch):
+            return other
+        elif type(other) is int:
+            b = Bruch(other, 1)
             return b
         else:
-            raise TypeError('incompatible types:'+type(tmp).__name__)
-    
-    def __eq__(self, tmp):
+            raise TypeError('incompatible types:' + type(other).__name__ + ' not an int nor a Bruch')
 
-        """
-        equal
+    def __eq__(self, other):
 
-        :param Bruch tmp: temporary Bruch
+        """equal to
+
+        :param Bruch other: other Bruch
         :return: boolean
         """
-        tmp = Bruch.__makeBruch(tmp)
-        return self.zaehler * tmp.nenner == tmp.zaehler * self.nenner
-        
-    def __ne__(self, tmp):
+        other = Bruch.__makeBruch(other)
+        return self.zaehler * other.nenner == other.zaehler * self.nenner
 
-        """
-        not equal
+    def __ne__(self, other):
 
-        :param Bruch tmp: temporary Bruch
+        """not equal to
+
+        :param Bruch other: other Bruch
         :return: boolean
         """
-        return not self.__eq__(tmp)
-    
-    def __gt__(self, tmp):
+        return not self.__eq__(other)
 
-        """
-        greather than
+    def __gt__(self, other):
 
-        :param Bruch tmp: temporary Bruch
+        """groesser als
+
+        :param Bruch other: other Bruch
         :return: boolean
         """
-        tmp = Bruch.__makeBruch(tmp)
-        return self.zaehler * tmp.nenner > tmp.zaehler * self.nenner
-        
-    def __lt__(self, tmp):
+        other = Bruch.__makeBruch(other)
+        return self.zaehler * other.nenner > other.zaehler * self.nenner
 
-        """
-        lower than
+    def __lt__(self, other):
 
-        :param Bruch tmp: temporary Bruch
+        """kleiner als
+
+        :param Bruch other: other Bruch
         :return: boolean
         """
-        tmp = Bruch.__makeBruch(tmp)
-        return self.zaehler * tmp.nenner < tmp.zaehler * self.nenner
-        
-    def __ge__(self, tmp):
-        """
-        greather or equal to
+        other = Bruch.__makeBruch(other)
+        return self.zaehler * other.nenner < other.zaehler * self.nenner
 
-        :param Bruch tmp: temporary Bruch
+    def __ge__(self, other):
+        """groesser gleich
+
+        :param Bruch other: other Bruch
         :return: boolean
         """
-        tmp = Bruch.__makeBruch(tmp)
-        return self.zaehler * tmp.nenner >= tmp.zaehler * self.nenner
-        
-    def __le__(self, tmp):
-        """
-        lower or equal to
+        other = Bruch.__makeBruch(other)
+        return self.zaehler * other.nenner >= other.zaehler * self.nenner
 
-        :param Bruch tmp: temporary Bruch
+    def __le__(self, other):
+        """kleiner gleich
+
+        :param Bruch other: other Bruch
         :return: boolean
         """
-        tmp = Bruch.__makeBruch(tmp)
-        return self.zaehler * tmp.nenner <= tmp.zaehler * self.nenner
-    
+        other = Bruch.__makeBruch(other)
+        return self.zaehler * other.nenner <= other.zaehler * self.nenner
+
     def __abs__(self):
-        """
-        overridesabs(Bruch)
+        """absolute Werte von Bruch
 
         :return: positive Bruch
         """
         return Bruch(abs(self.zaehler), abs(self.nenner))
-    
-    def __iadd__(self, tmp):
 
-        """intern add
+    def __iadd__(self, other):
 
-        :param Bruch tmp: temporary Bruch
+        """interne Addition
+
+        :param Bruch other: Bruch
         :return: self
         """
-        tmp = Bruch.__makeBruch(tmp)
-        self = self + tmp
+        other = Bruch.__makeBruch(other)
+        self = self + other
         return self
-        
-    def __isub__(self, tmp):
 
-        """intern sub
+    def __isub__(self, other):
 
-        :param Bruch tmp: temporary Bruch
+        """interne Subtraktion
+
+        :param Bruch other: Bruch
         :return: self
         """
-        tmp = Bruch.__makeBruch(tmp)
-        self = self - tmp
+        other = Bruch.__makeBruch(other)
+        self = self - other
         return self
-        
-    def __imul__(self, tmp):
 
-        """intern mul
+    def __imul__(self, other):
 
-        :param Bruch tmp: temporary Bruch
+        """interne Multiplikation
+
+        :param Bruch other: other Bruch
         :return: self
         """
-        tmp = Bruch.__makeBruch(tmp)
-        self = self * tmp
+        other = Bruch.__makeBruch(other)
+        self = self * other
         return self
-    
-    def __idiv__(self, tmp):
 
-        """intern division 2.x
+    def __idiv__(self, other):
 
-        :param Bruch tmp: temporary Bruch
+        """interne Division für Python 2.x
+
+        :param Bruch other: other Bruch
         :return: self
         """
-        return self.__itruediv__(tmp)
+        return self.__itruediv__(other)
 
-    def __itruediv__(self, tmp):
+    def __itruediv__(self, other):
 
-        """intern division 3.x
+        """interne Division für Python 3.x
 
-        :param Bruch tmp: temporary Bruch
+        :param Bruch other: other Bruch
         :return: self
         """
-        tmp = Bruch.__makeBruch(tmp)
-        self = self / tmp
+        other = Bruch.__makeBruch(other)
+        self = self / other
         return self
+
+    @classmethod
+    def gcd(cls, x, y):
+
+        """euclidischer Algorithmus
+
+        :param int x: first value
+        :param int y: second value
+        :return: groesster gemeinsamer nenner
+        """
+        x, y = abs(x), abs(y)
+        if x < y:
+            x, y = y, x
+        """Berechnung """
+        while y != 0:
+            x, y = y, x % y
+        return x
